@@ -20,10 +20,12 @@
       <div class="form-group">
         <label for="email">邮箱</label>
         <input required type="email" class="form-control" id="email" name="email" placeholder="Email" autofocus>
+        <div class="email-err" style="color: red; margin-top: 5px; padding-left: 12px;"></div>
       </div>
       <div class="form-group">
         <label for="nickname">昵称</label>
         <input required type="text" class="form-control" id="nickname" name="nickname" placeholder="Nickname">
+        <div class="nickname-err" style="color: red; margin-top: 5px; padding-left: 12px;"></div>
       </div>
       <div class="form-group">
         <label for="password">密码</label>
@@ -33,13 +35,33 @@
     </form>
     <div class="message">
       <p>已有账号? <a href="/signin">点击登录</a>.</p>
-      {{ if msg }}
-        <div style="color: red">
-          {{ msg }}
-        </div>
-      {{ /if }}
+      
     </div>
   </div>
   <script src="/node_modules/jquery/dist/jquery.js"></script>
+  <script>
+    $('#signup_form').on('submit', function (e) {
+      e.preventDefault();
+      var formdata = $(this).serialize();
+      $.post('/signup', formdata, function (data) {
+        switch (data.code) {
+          case 200:
+            window.alert('注册成功')
+            window.location.href = '/signin'
+            break
+          case 401:
+            $('.email-err').html('邮箱已存在')
+            break
+          case 402:
+            $('.nickname-err').html('昵称已存在')
+            break
+          case 500:
+            window.alert('注册失败')
+            window.location.href = '/signup'
+            break
+        }
+      })
+    })
+  </script>
 </body>
 </html>
