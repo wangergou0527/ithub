@@ -35,7 +35,7 @@
     </form>
     <div class="message">
       <p>已有账号? <a href="/signin">点击登录</a>.</p>
-      
+      <div style="color: red"></div>
     </div>
   </div>
   <script src="/node_modules/jquery/dist/jquery.js"></script>
@@ -46,19 +46,25 @@
       $.post('/signup', formdata, function (data) {
         switch (data.code) {
           case 200:
-            window.alert('注册成功')
-            window.location.href = '/signin'
+            $('.message div').html('注册成功, 2s后跳转到登录页面')
+            setTimeout(function () {
+              window.location.href = '/signin'
+            }, 2000) 
             break
           case 401:
-            $('.email-err').html('邮箱已存在')
+            $('.email-err').html(data.msg)
+            $('.nickname-err').html(null)
             break
           case 402:
-            $('.nickname-err').html('昵称已存在')
+            $('.nickname-err').html(data.msg)
+            $('.email-err').html(null)
             break
-          case 500:
-            window.alert('注册失败')
+          case 403:
+            window.alert(data.msg)
             window.location.href = '/signup'
             break
+          case 500:
+            window.alert(data.msg)
         }
       })
     })
